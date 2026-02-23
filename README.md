@@ -1,135 +1,124 @@
-# 🚀 Laboratório DevOps: Aprenda DevOps na Prática com Projetos Progressivos
+# 🚀 Lab DevOps: Containerização e Deploy Manual na AWS
 
-Olá! Eu sou Maria Lazara, DevOps Engineer, e vou te guiar nessa jornada DevOps. Sei que conceitos como containerização, IaC e CI/CD podem parecer intimidadores no início. Por isso, adoto uma didática simples e prática: vamos construir o conhecimento **de trás pra frente**. Isso significa começar pelo problema real – algo que você pode vivenciar e sentir a dor – e só depois buscar a solução, experimentando ferramentas como Docker, Terraform e GitHub Actions. No final, conectamos à teoria para solidificar o aprendizado.
+![Status](https://img.shields.io/badge/Status-Fase%201%20Concluída-green)
+![Docker](https://img.shields.io/badge/Docker-Pronto-blue)
+![AWS](https://img.shields.io/badge/AWS-EC2%20%7C%20ECR%20%7C%20IAM-orange)
 
-Meu foco é ensinar você a resolver problemas comuns que DevOps Engineers enfrentam diariamente, como "funciona na minha máquina, mas não no servidor" ou "deploys manuais causam downtime". Cada projeto aqui é uma peça de um quebra-cabeça: eles se conectam, aumentando a dificuldade gradualmente, simulando uma evolução real de um setup básico para um pipeline DevOps profissional.
+## 📋 Índice
 
-Este repositório contém 3 pastas, cada uma com um projeto independente, mas interligado:
-- **projeto-devops-fase-1**: O básico – containerize e deploy manual de um site estático na AWS.
-- **projeto-devops-fase-2**: Adicione automação de infraestrutura com Terraform (IaC).
-- **projeto-devops-fase-3**: Full automation com CI/CD usando GitHub Actions + Terraform + Docker.
-
-Cada pasta tem seu próprio `README.md` com passos detalhados, incluindo desafios para você simular problemas reais. Baixe o repo, siga os passos e experimente!
-
-*[Espaço para print: Estrutura do repositório no GitHub, mostrando as 3 pastas]*
-
-## 📋 Pré-requisitos Técnicos
-
-**⚠️ IMPORTANTE**: Este laboratório é para pessoas com conhecimento básico-intermediário em desenvolvimento e infraestrutura. Não é um curso de fundamentos.
-
-### Conhecimentos Obrigatórios:
-
-**🐧 Linux/Unix Básico**
-- Navegação no terminal (ls, cd, mkdir, cp, mv, rm)
-- Edição de arquivos (nano, vim ou VS Code)
-- Permissões básicas (chmod, sudo)
-- SSH e conexões remotas
-
-**☁️ AWS Básico**
-- Conceitos de EC2, IAM, VPC, Security Groups
-- Como criar instâncias e configurar acesso
-- AWS CLI configurado e funcional
-- Entender Free Tier e custos básicos
-
-**🐳 Docker Básico-Intermediário**
-- Diferença entre imagem e container
-- Comandos essenciais (build, run, push, pull)
-- Como escrever Dockerfile básico
-- Conceito de registries (Docker Hub, ECR)
-
-**🏗️ Terraform Básico**
-- Conceitos de Infrastructure as Code (IaC)
-- Comandos básicos (init, plan, apply, destroy)
-- Entender HCL (HashiCorp Configuration Language)
-- Conceito de state file
-
-**🔧 Git/GitHub**
-- Comandos básicos (clone, add, commit, push, pull)
-- Criação de repositórios
-- Conceitos de branches
-
-### Auto-avaliação Rápida:
-✅ Consigo criar uma instância EC2 e conectar via SSH?
-✅ Sei fazer build de uma imagem Docker e executar?
-✅ Já usei terraform apply para criar recursos?
-✅ Domino comandos básicos do terminal Linux?
-
-**Se marcou menos de 4 ✅**: Estude os fundamentos primeiro antes de continuar.
+1. [Visão Geral](#-visão-geral)
+2. [Arquitetura do Projeto](#-arquitetura-do-projeto)
+3. [Fase 1: Containerização Local (Docker)](#-fase-1-containerização-local-docker)
+4. [Fase 2: Registro Privado na Nuvem (AWS ECR)](#-fase-2-registro-privado-na-nuvem-aws-ecr)
+5. [Fase 3: Provisionamento e Segurança (AWS EC2 & IAM)](#-fase-3-provisionamento-e-segurança-aws-ec2--iam)
+6. [Fase 4: Deploy em Produção](#-fase-4-deploy-em-produção)
+7. [Próximos Passos](#-próximos-passos)
 
 ---
 
-## ❓ Por Que Essa Abordagem "De Trás Pra Frente"?
-Em vez de começar com teoria seca ("o que é Docker?"), vamos imitar a vida real: Você enfrenta um problema concreto, sente a frustração, e então descobre a ferramenta que resolve. Isso torna o aprendizado memorável e prático. Por exemplo:
-- Primeiro, vivencie o caos de um deploy manual.
-- Depois, busque soluções como "como automatizar isso?".
-- Finalmente, entenda a teoria por trás (ex.: "containers isolam dependências").
+## 🎯 Visão Geral
 
-Isso é baseado em estudos de problemas: Cada projeto começa com uma situação real, como uma startup crescendo e enfrentando gargalos, inspirada em casos que vi em equipes reais.
+Este repositório documenta minha jornada prática de estudos em Engenharia DevOps. O objetivo deste laboratório foi simular um cenário real de infraestrutura, eliminando o problema de "funciona na minha máquina".
 
-## 🎯 Visão Geral dos Projetos
-Vamos construir um website estático simples (HTML/CSS/JS) e deployá-lo na AWS. Mas o foco não é o site – é o processo DevOps ao redor dele. Cada fase resolve problemas da anterior, adicionando camadas de automação.
+Peguei um website estático simples e realizei o deploy em uma instância EC2 na AWS, garantindo portabilidade através de containers Docker e aplicando princípios de segurança (Least Privilege) com IAM Roles.
 
-### Projeto 1: Containerização com Docker e Deploy Manual na AWS (Nível Básico)
-- **Problema Real**: Imagine você em uma pequena equipe: O dev altera o código, mas no servidor AWS, "não funciona" por causa de dependências diferentes. Deploys envolvem SSH manual, levando a erros e tempo perdido.
-- **Solução Prática**: Use Docker para "empacotar" o site em um container portátil. Crie um ECR na AWS, push a imagem e deploy manual na EC2.
-- **Ferramentas Aprendidas**: Docker, AWS CLI, ECR, EC2, Security Groups.
-- **Conexão**: Isso resolve o "funciona na minha máquina", mas ainda é manual – preparando o terreno para automação na Fase 2.
-- **Tempo Estimado**: 2-3 horas.
-- **Desafio Inicial**: Tente deployar manualmente sem Docker e veja os erros de dependências.
+---
 
-*[Espaço para print: Diagrama simples da arquitetura do Projeto 1, mostrando código local → Docker → ECR → EC2 → Browser]*
+## 🏗️ Arquitetura do Projeto
 
-### Projeto 2: Automatização de Infraestrutura com Terraform (IaC) (Nível Intermediário)
-- **Problema Real**: Agora a startup cresce: Você precisa recriar ambientes (dev/staging/prod) rapidamente, mas cliques manuais no console AWS causam inconsistências, erros e "drift" (mudanças não rastreadas). Um deploy de emergência falha porque uma configuração foi esquecida.
-- **Solução Prática**: Trate a infra como código com Terraform. Declare recursos como EC2, ECR e IAM Roles em arquivos HCL, e o Terraform provisiona tudo automaticamente.
-- **Ferramentas Aprendidas**: Terraform (init/plan/apply/destroy), backends remotos (S3 para state), outputs para integração.
-- **Conexão**: Integra com o Docker do Projeto 1 – agora a infra é reproduzível, mas o deploy ainda requer SSH manual. Isso motiva a full automation na Fase 3.
-- **Tempo Estimado**: 2-4 horas.
-- **Desafio Inicial**: Tente recriar manualmente o ambiente do Projeto 1 em uma nova região e note os pontos de dor.
+![Arquitetura do Projeto](project_devops_p1.png)
 
-*[Espaço para print: Diagrama da arquitetura do Projeto 2, mostrando arquivos Terraform → AWS Infra (EC2/ECR) → Deploy Docker]*
+**Fluxo de Funcionamento:**
 
-### Projeto 3: Automatização Completa com CI/CD (GitHub Actions + Terraform + Docker) (Nível Avançado)
-- **Problema Real**: Com múltiplos devs, changes diárias viram caos: Deploys manuais criam gargalos, erros humanos e falta de auditabilidade. Um pico de tráfego exige update rápido, mas conflitos no Terraform state causam downtime.
-- **Solução Prática**: Separe repos (app e infra), use GitHub Actions para pipelines CI/CD. Push no código dispara builds Docker, plans Terraform e deploys com aprovações manuais para segurança.
-- **Ferramentas Aprendidas**: GitHub Actions (workflows YAML, secrets, aprovações), integração multi-repo.
-- **Conexão**: Une tudo: Docker do Projeto 1 + Terraform do Projeto 2 em um fluxo automatizado. Agora, é um pipeline DevOps real, escalável para equipes.
-- **Tempo Estimado**: 3-5 horas.
-- **Desafio Inicial**: Simule deploys simultâneos manuais no setup do Projeto 2 e veja conflitos.
+1. Código empacotado localmente gerando uma Imagem Docker (`nginx:alpine`).
+2. Imagem enviada com segurança para um repositório privado na nuvem (AWS ECR).
+3. Servidor Linux (EC2) provisionado na AWS.
+4. EC2 assume uma permissão temporária (IAM Role) para baixar a imagem do ECR.
+5. Container entra em execução expondo a porta 80 para a internet.
 
-*[Espaço para print: Diagrama completo da arquitetura do Projeto 3, mostrando Repos GitHub → Actions CI/CD → AWS Infra + Deploy]*
+---
 
-## 🔧 Como Começar
-1. **Clone o Repositório**:
-   ```bash
-   git clone https://github.com/marialazara/devops-projects.git
-   cd seu-repo-devops
-   ```
-2. **Escolha uma Fase**: Comece pela pasta `projeto-devops-fase-1` e avance. Cada README tem pré-requisitos, passos e troubleshooting.
-3. **Ambiente**: Certifique-se de ter uma conta AWS gratuita (cuidado com custos – use Free Tier). Instale ferramentas como Docker, Terraform e AWS CLI conforme descrito.
-4. **Dicas Gerais**:
-   - Use VS Code para editar arquivos.
-   - Sempre teste localmente antes de apply/destroy.
-   - Limpe recursos AWS no final para evitar custos!
-5. **Personalize**: Substitua placeholders (ex.: regiões AWS, nomes de repos) com os seus.
+## 🐳 Fase 1: Containerização Local (Docker)
 
-## 🎓 Conceitos Aprendidos no Geral
-Ao final, você dominará ferramentas chave de um DevOps Engineer:
-- **Containerização** (Docker): Resolve inconsistências de ambiente.
-- **IaC** (Terraform): Automatiza e versiona infra.
-- **CI/CD** (GitHub Actions): Orquestra fluxos para deploys rápidos e seguros.
-- **Melhores Práticas**: Secrets management, aprovações, state locking, drift detection.
+Foi criado um arquivo `Dockerfile` na raiz do projeto para empacotar a aplicação utilizando um servidor web Nginx leve.
 
-Esses projetos simulam uma progressão real: De manual para IaC para automatizado, resolvendo problemas como escalabilidade, colaboração e erros humanos.
+```dockerfile
+# Imagem base ultraleve
+FROM nginx:alpine
 
-## 📚 Recursos Adicionais
-- [Documentação Docker](https://docs.docker.com/)
-- [Terraform Learning](https://learn.hashicorp.com/terraform)
-- [GitHub Actions Docs](https://docs.github.com/en/actions)
-- Livros: "The DevOps Handbook" para teoria aplicada.
-- Comunidades: Reddit r/devops, Stack Overflow.
+# Copia os arquivos do site para a pasta padrão do Nginx
+COPY website/ /usr/share/nginx/html/
 
-## 🧹 Notas Finais
-Lembre-se: DevOps é sobre cultura tanto quanto ferramentas – automatize para liberar tempo para inovação. Se travar, pesquise o erro (ex.: "Terraform AMI not found") – isso treina skills reais!
+# Expõe a porta de comunicação
+EXPOSE 80
 
-Desenvolvido com ❤️ por Maria Lazara. Assista ao meu vídeo explicativo no YouTube, onde falo desses projetos e do mundo DevOps: [Link para o Vídeo](https://www.youtube.com/@marialazaradev). Compartilhe seu progresso nos comentários! 🚀
+# Mantém o container rodando em primeiro plano
+CMD ["nginx", "-g", "daemon off;"]
+
+```
+
+Comandos de Build e Teste Local:
+
+```bash
+# Construir a imagem
+docker build -t meu-site:1.0 .
+
+# Rodar para testar localmente na porta 8080
+docker run -d -p 8080:80 --name site-teste meu-site:1.0
+```
+
+## ☁️ Fase 2: Registro Privado na Nuvem (AWS ECR)
+
+Para não deixar a imagem pública, criei um repositório no Elastic Container Registry (ECR).
+
+Autenticação e Upload (Push):
+
+```bash
+
+# Autenticar o Docker local na AWS
+aws ecr get-login-password --region sa-east-1 | docker login --username AWS --password-stdin [SEU_ACCOUNT_ID].dkr.ecr.sa-east-1.amazonaws.com
+
+# "Etiquetar" a imagem com o destino da nuvem
+docker tag meu-site:1.0 [SEU_ACCOUNT_ID].dkr.ecr.sa-east-1.amazonaws.com/meu-site:1.0
+
+# Enviar para a AWS
+docker push [SEU_ACCOUNT_ID].dkr.ecr.sa-east-1.amazonaws.com/meu-site:1.0
+```
+
+## 🔒 Fase 3: Provisionamento e Segurança (AWS EC2 & IAM)
+
+Para hospedar o site, criei uma máquina virtual Amazon Linux 2023 (t3.micro).
+
+Configuração do Firewall (Security Group)
+
+- Porta 22 (SSH): Liberada APENAS para o meu IP local.
+- Porta 80 (HTTP): Liberada para a internet (0.0.0.0/0).
+
+Segurança com IAM Roles
+
+Ao invés de inserir senhas estáticas (aws configure) dentro do servidor, criei uma IAM Role com a política AmazonEC2ContainerRegistryReadOnly e anexei à EC2. Isso garante que a máquina tenha permissão de ler o ECR sem expor credenciais root.
+
+## 🚀 Fase 4: Deploy em Produção
+
+Acessando o servidor via SSH, preparei o ambiente e rodei a aplicação.
+
+```bash
+# Atualizar sistema e instalar Docker
+sudo yum update -y
+sudo yum install docker -y
+sudo systemctl start docker
+sudo usermod -a -G docker ec2-user
+
+# Autenticar no ECR (funciona graças à IAM Role)
+aws ecr get-login-password --region sa-east-1 | docker login --username AWS --password-stdin [SEU_ACCOUNT_ID].dkr.ecr.sa-east-1.amazonaws.com
+
+# Baixar e executar a imagem
+docker pull [SEU_ACCOUNT_ID].dkr.ecr.sa-east-1.amazonaws.com/meu-site:1.0
+docker run -d -p 80:80 --name site-prod [SEU_ACCOUNT_ID].dkr.ecr.sa-east-1.amazonaws.com/meu-site:1.0
+```
+
+Resultado: Site acessível publicamente através do IP da EC2.
+
+## 👣 Próximos Passos
+
+O próximo objetivo deste laboratório é evoluir esta infraestrutura manual para Infraestrutura como Código (IaC) utilizando Terraform, automatizando a criação da VPC, ECR, EC2 e Security Groups.
